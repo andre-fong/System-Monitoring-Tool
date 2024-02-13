@@ -4,6 +4,10 @@ This program reports on different metrics and information of the system it is ru
 
 This program is meant to be run on a **Linux operating system** (WSL on Windows works as well), as it makes use of Linux system files such as <code>proc/cpuinfo</code> and more.
 
+## Example
+
+![Screenshot of system monitoring tool](/program_example.png "Program screenshot")
+
 # Installation
 
 1. Clone the repo
