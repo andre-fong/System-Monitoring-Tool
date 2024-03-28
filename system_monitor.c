@@ -352,7 +352,7 @@ int main(int argc, char **argv) {
 	float cpuUsage;
 	FILE *stats;
 	
-	int sleepTime = (delay > 1) ? delay - 1 : 1;
+	int sleepTime = (delay > 1) ? delay - 1 : 1;	// delay for gathering change in CPU stats (min. 1s)
 	
 	// Program start
 	for (int i = 0; i < samples; i++) {
@@ -448,7 +448,7 @@ int main(int argc, char **argv) {
 		initialTotTime = userT + niceT + systemT + idleT + iowaitT + irqT + softirqT;
 
 		// Wait and then sample CPU stats again
-		sleep(1);	// delay min of 1 sec to wait for /proc/stat to update
+		sleep(sleepTime);	// delay min of 1 sec to wait for /proc/stat to update
 		if (fscanf(stats, "%*s %ld %ld %ld %ld %ld %ld %ld", &userT, &niceT, &systemT, &idleT, &iowaitT, &irqT, &softirqT) != 7) {
 			fprintf(stderr, "warn: Some fields are missing when getting cpu stats\n");
 		}
@@ -459,7 +459,7 @@ int main(int argc, char **argv) {
 		if (newTimeIdle - initialTimeIdle == 0 || newTotTime - initialTotTime == 0) {
 			cpuUsage = 0;
 		}
-		else cpuUsage = (1 - ((double)(newTimeIdle - initialTimeIdle) / (double)(newTotTime - initialTotTime))) * 100;
+		else cpuUsage = 100 * (double)((newTotTime - newTimeIdle) - (initialTotTime - initialTimeIdle)) / (double)(newTotTime - initialTotTime);
 
 		// Write new cpu usage stat to linked list
 		if (cpuHead == NULL) cpuHead = newCNode(cpuUsage);
@@ -481,7 +481,7 @@ int main(int argc, char **argv) {
 		}
 		
 		/* DELAY */
-		sleep(sleepTime);	// delay remaining time
+		sleep((delay - sleepTime >= 0) ? delay - sleepTime : 0);	// delay remaining time
 	}
 	
 	if (graphics) printf("\033[%dB", samples);	// Realign output pointer
