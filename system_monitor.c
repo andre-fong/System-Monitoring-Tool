@@ -307,10 +307,9 @@ int main(int argc, char **argv) {
 	MemoryNode *memoryHead = NULL;
 	CpuUseNode *cpuHead = NULL;
 	
-	// Get initial program memory used
+	// Declare vars for memory usage report
 	struct rusage usage;
-	getrusage(RUSAGE_SELF, &usage);
-	long curProgMem = usage.ru_maxrss;
+	long curProgMem;
 	float physTot, physUsed, virtTot, virtUsed;
 	
 	// Get initial computer uptime
@@ -381,14 +380,14 @@ int main(int argc, char **argv) {
 		// Running parameters
 		if (sequential) printf(">>> iteration %d\n", i);
 		else printf("Nbr of samples: %d -- every %d secs\n", samples, delay);
-		printf(" Memory usage: %ld kilobytes\n", curProgMem);
+		printf(" Memory usage: %ld kilobytes\n", curProgMem);	// program memory usage always printed
 		printSectionLine();
 		
 		// Memory usage
 		if (!user || system) {
 			printf("### Memory ### (Phys.Used/Tot -- Virtual Used/Tot)\n");
 			printMList(memoryHead, sequential, graphics);
-			for (int j = 0; j < samples - i - 1; j++) printf("\n");
+			for (int j = 0; j < samples - i - 1; j++) printf("\n");		// fill blank space for memory section
 			printSectionLine();
 		}
 		
